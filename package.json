@@ -1,12 +1,13 @@
 {
   "name": "abstract-migrator-pg",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest"
   },
   "author": "Steven Snyder <snyder13@purdue.edu>",
+  "repository": "bitbucket:snyder13/abstract-migrator-pg",
   "license": "MIT",
   "dependencies": {
     "pg": "^7.4.3"
