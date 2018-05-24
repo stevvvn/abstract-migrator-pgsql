@@ -1,0 +1,14 @@
+{
+  "name": "abstract-migrator-pg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Steven Snyder <snyder13@purdue.edu>",
+  "license": "MIT",
+  "dependencies": {
+    "pg": "^7.4.3"
+  }
+}
