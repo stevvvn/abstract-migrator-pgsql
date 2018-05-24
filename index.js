@@ -18,7 +18,9 @@ class PgMigrator {
 		return this.dbh;
 	}
 
+	// check for & maybe create log table
 	install() {
+		// check for log table
 		return this.dbh.query(`SELECT EXISTS(
 			SELECT 1
 			FROM information_schema.tables
@@ -35,9 +37,11 @@ class PgMigrator {
 				)`);
 			})
 			.then(() => this.dbh.query('BEGIN'))
+			// resolve to this so caller can use result to do their work
 			.then(() => this);
 	}
 
+	// return whether we believe a migration was already applied
 	applied(name) {
 		return (this.appliedMap
 			? Promise.resolve()
@@ -49,10 +53,12 @@ class PgMigrator {
 			.then(() => this.appliedMap[name] === true);
 	}
 
+	// mark applied
 	record(name) {
 		return this.dbh.query(`INSERT INTO ${ this.prefix }migrations (name) VALUES ($1) ON CONFLICT (name) DO NOTHING`, [ name ]);
 	}
 
+	// clear applied mark
 	remove(name) {
 		return this.dbh.query(`DELETE FROM ${ this.prefix }migrations WHERE name = $1`, [ name ]);
 	}
