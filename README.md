@@ -34,39 +34,4 @@ The only parameter added by this module is `prefix`. By default, a table called 
 
 ## Usage
 
-These examples assume you have `cd`-ed to `migrations/pg/` in your project path. You can also supply `--path /project/path` instead of relying on the working directory.
-
-### View help
-
-	$ amigrate
-	Usage: amigrate [options] verb [verb args]
-	... snip ...
-
-### Create a migration
-
-	$ amigrate create test migration
-	/project/path/migrations/pg/2018-05-24T17-00-55-821Z-test-migration.js
-
-Since the output is the generated filename, you can edit immediately with, e.g.,
-
-	$ vim `amigrate create another test migration`
-
-This is a file that exports `{ up, down }` methods that are passed an instance of `pg.Client` and are expected to either perform their duty synchronously or return a `Promise`. Usage of the callback-style API is not supported.
-
-You can change how these newly-created migrations look by creating & editing `/project/path/migrations/pg/template.js`
-
-### Run a migration
-
-Single target:
-
-	$ amigrate up /project/path/migrations/pg/2018-05-24T17-00-55-821Z-test-migration.js
-
-All unapplied:
-
-	$ amigrate up
-
-### Roll back a migration
-
-Single target only:
-
-	$ amigrate down /project/path/migrations/pg/2018-05-24T17-00-55-821Z-test-migration.js
+See the [abstract-migrator docs](https://bitbucket.org/snyder13/abstract-migrator) for CLI usage.
