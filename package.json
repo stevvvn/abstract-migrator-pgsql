@@ -1,6 +1,6 @@
 {
   "name": "abstract-migrator-pg",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,5 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "pg": "^7.4.3"
+  },
+  "peerDependencies": {
+    "abstract-migrator": "^1.0.1"
   }
 }
