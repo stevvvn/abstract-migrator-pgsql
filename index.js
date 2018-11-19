@@ -2,7 +2,7 @@
 const { Client } = require('pg');
 
 module.exports = (conf) => {
-	const dbh = new Client(conf.get('pg'));
+	const dbh = new Client(conf.get('pgsql'));
 	return dbh.connect()
 		.then(() => new PgMigrator(dbh, conf))
 		.then((dbh) => dbh.install());
@@ -19,38 +19,28 @@ class PgMigrator {
 	}
 
 	// check for & maybe create log table
-	install() {
+	async install() {
 		// check for log table
-		return this.dbh.query(`SELECT EXISTS(
+		const { rows } = await this.dbh.query(`SELECT EXISTS(
 			SELECT 1
 			FROM information_schema.tables
 			WHERE table_schema = current_schema() AND table_name = $1
 		)`, [ `${ this.prefix }migrations` ])
-			.then(({ rows }) => {
-				if (rows[0].exists) {
-					return;
-				}
-				return this.dbh.query(`CREATE TABLE ${ this.prefix }migrations (
-					id serial NOT NULL PRIMARY KEY,
-					name text NOT NULL UNIQUE,
-					ran timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-				)`);
-			})
-			.then(() => this.dbh.query('BEGIN'))
-			// resolve to this so caller can use result to do their work
-			.then(() => this);
+		if (!rows[0].exists) {
+			await this.dbh.query(`CREATE TABLE ${ this.prefix }migrations (
+				id serial NOT NULL PRIMARY KEY,
+				name text NOT NULL UNIQUE,
+				ran timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+			)`);
+		}
+		await this.dbh.query('BEGIN');
+		return this;
 	}
 
 	// return whether we believe a migration was already applied
-	applied(name) {
-		return (this.appliedMap
-			? Promise.resolve()
-			: this.dbh.query(`SELECT name FROM ${ this.prefix }migrations`)
-				.then(({ rows }) => {
-					this.appliedMap = {};
-					rows.forEach(({ name }) => this.appliedMap[name] = true);
-				}))
-			.then(() => this.appliedMap[name] === true);
+	async applied(name) {
+		const { rows } = await this.dbh.query(`SELECT COUNT(*) AS count FROM ${ this.prefix }migrations WHERE name = $1`, [ name ]);
+		return rows[0].count != 0;
 	}
 
 	// mark applied
